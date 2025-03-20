@@ -27,7 +27,73 @@ export const UserCreateResponseSchema = Type.Object({
     maxLength: 100,
     default: "User created successfully",
   }),
+  email: Type.String({
+    format: "email",
+  }),
+  name: Type.String({
+    minLength: 1,
+    maxLength: 50,
+  }),
+  password: Type.Optional(
+    Type.String({
+      minLength: 8,
+      maxLength: 100,
+    })
+  ),
+});
+
+export const userInfoSchema = Type.Object({
+  id: Type.Optional(
+    Type.String({
+      format: "uuid",
+    })
+  ),
+  name: Type.String({
+    minLength: 1,
+    maxLength: 50,
+  }),
+  email: Type.String({
+    format: "email",
+  }),
+  income: Type.Number({
+    minimum: 0,
+  }),
+  expenses: Type.Number({
+    minimum: 0,
+  }),
+  createdAt: Type.String({
+    format: "date-time",
+  }),
+  updatedAt: Type.String({
+    format: "date-time",
+  }),
+});
+
+export const updateUserSchema = Type.Object({
+  name: Type.Optional(
+    Type.String({
+      minLength: 1,
+      maxLength: 50,
+    })
+  ),
+  email: Type.Optional(
+    Type.String({
+      format: "email",
+    })
+  ),
+  income: Type.Optional(
+    Type.Number({
+      minimum: 0,
+    })
+  ),
+  expenses: Type.Optional(
+    Type.Number({
+      minimum: 0,
+    })
+  ),
 });
 
 export type UserCreateObject = Static<typeof UserCreateSchema>;
 export type UserCreateResponseObject = Static<typeof UserCreateResponseSchema>;
+export type UserInfoObject = Static<typeof userInfoSchema>;
+export type UpdateUserObject = Static<typeof updateUserSchema>;
