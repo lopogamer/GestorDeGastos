@@ -5,8 +5,8 @@ import {
   UserCreateResponseSchema,
   userInfoSchema,
   updateUserSchema,
-  NotFoundSchema,
 } from "../schemas/user.schemas";
+import { idParamsSchema, NotFoundSchema } from "../schemas/common.schemas";
 
 function createUserRoute(app: FastifyInstance) {
   app.post("/", {
@@ -23,17 +23,13 @@ function createUserRoute(app: FastifyInstance) {
 function getUserRoute(app: FastifyInstance) {
   app.get("/:id", {
     schema: {
-      params: {
-        type: "object",
-        properties: {
-          id: { type: "string" },
-        },
-      },
+      params: idParamsSchema,
       response: {
         200: userInfoSchema,
         404: NotFoundSchema,
       },
     },
+    preHandler: app.authenticate,
     handler: userController.getUser,
   });
 }
@@ -41,41 +37,28 @@ function getUserRoute(app: FastifyInstance) {
 function updateUserRoute(app: FastifyInstance) {
   app.put("/:id", {
     schema: {
-      params: {
-        type: "object",
-        properties: {
-          id: { type: "string" },
-        },
-      },
       body: updateUserSchema,
       response: {
         200: userInfoSchema,
         404: NotFoundSchema,
       },
     },
+    preHandler: app.authenticate,
     handler: userController.updateUser,
   });
 }
 
 function deleteUserRoute(app: FastifyInstance) {
-  app.delete("/:id", {
+  app.delete("/", {
     schema: {
-      params: {
-        type: "object",
-        properties: {
-          id: { type: "string" },
-        },
-      },
       response: {
-        200: {
-          type: "object",
-          properties: {
-            message: { type: "string" },
-          },
+        204: {
+          type: "null",
         },
         404: NotFoundSchema,
       },
     },
+    preHandler: app.authenticate,
     handler: userController.deleteUser,
   });
 }

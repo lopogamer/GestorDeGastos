@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 import databaseClient from "../prisma/prisma_client";
 import { FastifyRequest } from "fastify";
 import { UserCreateObject as UserCreateRequest } from "../schemas/user.schemas";
+import { User } from "@prisma/client";
 
 export const userController = {
   async createUser(
@@ -26,6 +27,7 @@ export const userController = {
           expenses,
         },
       });
+
       reply.status(201).send({
         message: "User created successfully",
         name: name,
@@ -41,12 +43,9 @@ export const userController = {
     }
   },
 
-  async getUser(
-    request: FastifyRequest<{ Params: { id: string } }>,
-    reply: any
-  ) {
+  async getUser(request: any, reply: any) {
     try {
-      const { id } = request.params;
+      const { id } = request.user;
       const user = await databaseClient.user.findUnique({
         where: { id },
       });
@@ -73,14 +72,11 @@ export const userController = {
   },
 
   async updateUser(
-    request: FastifyRequest<{
-      Params: { id: string };
-      Body: typeof updateUserSchema;
-    }>,
+    request: FastifyRequest<{ Body: typeof updateUserSchema }>,
     reply: any
   ) {
     try {
-      const { id } = request.params;
+      const { id } = request.user as User;
       const { name, email, income, expenses } = request.body;
 
       const user = await databaseClient.user.findUnique({
@@ -117,12 +113,9 @@ export const userController = {
     }
   },
 
-  async deleteUser(
-    request: FastifyRequest<{ Params: { id: string } }>,
-    reply: any
-  ) {
+  async deleteUser(request: any, reply: any) {
     try {
-      const { id } = request.params;
+      const { id } = request.user;
       const user = await databaseClient.user.findUnique({
         where: { id },
       });
@@ -134,9 +127,7 @@ export const userController = {
         where: { id },
       });
 
-      reply.send({
-        message: "User deleted successfully",
-      });
+      reply.status(204).send();
     } catch (error) {
       console.error("Error deleting user:", error);
       reply.status(500).send({

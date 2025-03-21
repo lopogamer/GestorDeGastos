@@ -21,7 +21,6 @@ const databaseClient = new PrismaClient({
   ],
 });
 
-// Log queries in development
 if (process.env.NODE_ENV === "development") {
   databaseClient.$on("query", (e) => {
     console.log("Query: " + e.query);

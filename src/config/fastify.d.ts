@@ -6,5 +6,6 @@ declare module "fastify" {
       PORT: number;
       HOST: string;
     };
+    authenticate: (request: any, reply: any) => Promise<void>;
   }
 }
