@@ -3,6 +3,8 @@ import { FastifyRequest } from "fastify";
 import databaseClient from "../prisma/prisma_client";
 import { User } from "@prisma/client";
 import bcrypt from "bcrypt";
+import { register } from "module";
+import { UserCreateSchema } from "../schemas/user.schemas";
 
 export const authController = {
   async login(
@@ -43,22 +45,37 @@ export const authController = {
       });
     }
   },
-  async logout(request: FastifyRequest, reply: any) {
+  async register(
+    request: FastifyRequest<{ Body: typeof UserCreateSchema }>,
+    reply: any
+  ) {
     try {
-      const { id } = request.user as User;
-      const user = await databaseClient.user.findUnique({
-        where: { id },
+      const { name, email, password, income, expenses } = request.body;
+      const hashedPassword = await bcrypt.hash(
+        password,
+        Number(process.env.HASH_SALT) || 10
+      );
+      const id = crypto.randomUUID();
+      await databaseClient.user.create({
+        data: {
+          id,
+          name,
+          email,
+          password: hashedPassword,
+          income,
+          expenses,
+        },
       });
-      if (!user) {
-        return reply.status(404).send({
-          message: "User not found",
-        });
-      }
-      reply.status(200).send({
-        message: "Logout successful",
+
+      reply.status(201).send({
+        message: "User created successfully",
+        name: name,
+        email: email,
+        password: process.env.NODE_ENV === "development" ? password : undefined,
+        id: process.env.NODE_ENV === "development" ? id : undefined,
       });
     } catch (error) {
-      console.error("Error logging out:", error);
+      console.error("Error creating user:", error);
       reply.status(500).send({
         message: "Internal server error",
       });

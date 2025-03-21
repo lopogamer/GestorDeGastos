@@ -28,5 +28,17 @@ export const AuthLoginResponseSchema = Type.Object({
     default: "token",
   }),
 });
+
+export const authRegisterResponseSchema = Type.Object({
+  message: Type.String({
+    minLength: 1,
+    maxLength: 100,
+    default: "Usuário criado com sucesso",
+  }),
+});
+
 export type AuthLoginObject = Static<typeof AuthLoginSchema>;
 export type AuthLoginResponseObject = Static<typeof AuthLoginResponseSchema>;
+export type AuthRegisterResponseObject = Static<
+  typeof authRegisterResponseSchema
+>;

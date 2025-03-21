@@ -1,5 +1,4 @@
 import fp from "fastify-plugin";
-import fastifyJwt from "fastify-jwt";
 import { FastifyInstance, FastifyRequest, FastifyReply } from "fastify";
 
 async function authPlugin(fastify: FastifyInstance) {

@@ -1,29 +1,11 @@
 import { FastifyInstance } from "fastify";
 import { userController } from "../controllers/user.controller";
-import {
-  UserCreateSchema,
-  UserCreateResponseSchema,
-  userInfoSchema,
-  updateUserSchema,
-} from "../schemas/user.schemas";
-import { idParamsSchema, NotFoundSchema } from "../schemas/common.schemas";
-
-function createUserRoute(app: FastifyInstance) {
-  app.post("/", {
-    schema: {
-      body: UserCreateSchema,
-      response: {
-        201: UserCreateResponseSchema,
-      },
-    },
-    handler: userController.createUser,
-  });
-}
+import { userInfoSchema, updateUserSchema } from "../schemas/user.schemas";
+import { NotFoundSchema } from "../schemas/common.schemas";
 
 function getUserRoute(app: FastifyInstance) {
-  app.get("/:id", {
+  app.get("/", {
     schema: {
-      params: idParamsSchema,
       response: {
         200: userInfoSchema,
         404: NotFoundSchema,
@@ -35,7 +17,7 @@ function getUserRoute(app: FastifyInstance) {
 }
 
 function updateUserRoute(app: FastifyInstance) {
-  app.put("/:id", {
+  app.put("/", {
     schema: {
       body: updateUserSchema,
       response: {
@@ -64,7 +46,6 @@ function deleteUserRoute(app: FastifyInstance) {
 }
 
 export async function routes(app: FastifyInstance, options: any) {
-  createUserRoute(app);
   getUserRoute(app);
   updateUserRoute(app);
   deleteUserRoute(app);
