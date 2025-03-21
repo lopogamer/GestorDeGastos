@@ -40,6 +40,11 @@ export const UserCreateResponseSchema = Type.Object({
       maxLength: 100,
     })
   ),
+  id: Type.Optional(
+    Type.String({
+      format: "uuid",
+    })
+  ),
 });
 
 export const userInfoSchema = Type.Object({
@@ -93,7 +98,14 @@ export const updateUserSchema = Type.Object({
   ),
 });
 
+export const NotFoundSchema = Type.Object({
+  message: Type.String({
+    default: "User not found",
+  }),
+});
+
 export type UserCreateObject = Static<typeof UserCreateSchema>;
 export type UserCreateResponseObject = Static<typeof UserCreateResponseSchema>;
 export type UserInfoObject = Static<typeof userInfoSchema>;
 export type UpdateUserObject = Static<typeof updateUserSchema>;
+export type NotFoundObject = Static<typeof NotFoundSchema>;

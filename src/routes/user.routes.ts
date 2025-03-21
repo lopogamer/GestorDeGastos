@@ -1,14 +1,14 @@
-import { FastifyRequest, FastifyInstance } from "fastify";
+import { FastifyInstance } from "fastify";
 import { userController } from "../controllers/user.controller";
 import {
   UserCreateSchema,
   UserCreateResponseSchema,
-  UserCreateObject,
   userInfoSchema,
   updateUserSchema,
+  NotFoundSchema,
 } from "../schemas/user.schemas";
 
-export async function routes(app: FastifyInstance, options: any) {
+function createUserRoute(app: FastifyInstance) {
   app.post("/", {
     schema: {
       body: UserCreateSchema,
@@ -16,11 +16,11 @@ export async function routes(app: FastifyInstance, options: any) {
         201: UserCreateResponseSchema,
       },
     },
-    handler: async (
-      request: FastifyRequest<{ Body: UserCreateObject }>,
-      reply
-    ) => userController.createUser(request, reply),
+    handler: userController.createUser,
   });
+}
+
+function getUserRoute(app: FastifyInstance) {
   app.get("/:id", {
     schema: {
       params: {
@@ -31,22 +31,14 @@ export async function routes(app: FastifyInstance, options: any) {
       },
       response: {
         200: userInfoSchema,
-        404: {
-          type: "object",
-          properties: {
-            message: {
-              type: "string",
-              default: "User not found",
-            },
-          },
-        },
+        404: NotFoundSchema,
       },
     },
-    handler: async (
-      request: FastifyRequest<{ Params: { id: string } }>,
-      reply
-    ) => userController.getUser(request, reply),
+    handler: userController.getUser,
   });
+}
+
+function updateUserRoute(app: FastifyInstance) {
   app.put("/:id", {
     schema: {
       params: {
@@ -58,26 +50,14 @@ export async function routes(app: FastifyInstance, options: any) {
       body: updateUserSchema,
       response: {
         200: userInfoSchema,
-        404: {
-          type: "object",
-          properties: {
-            message: {
-              type: "string",
-              default: "User not found",
-            },
-          },
-        },
+        404: NotFoundSchema,
       },
     },
-    handler: async (
-      request: FastifyRequest<{
-        Params: { id: string };
-        Body: typeof updateUserSchema;
-      }>,
-      reply: any
-    ) => userController.updateUser(request, reply),
+    handler: userController.updateUser,
   });
+}
 
+function deleteUserRoute(app: FastifyInstance) {
   app.delete("/:id", {
     schema: {
       params: {
@@ -93,19 +73,16 @@ export async function routes(app: FastifyInstance, options: any) {
             message: { type: "string" },
           },
         },
-        404: {
-          type: "object",
-          properties: {
-            message: {
-              type: "string",
-            },
-          },
-        },
+        404: NotFoundSchema,
       },
     },
-    handler: async (
-      request: FastifyRequest<{ Params: { id: string } }>,
-      reply: any
-    ) => userController.deleteUser(request, reply),
+    handler: userController.deleteUser,
   });
+}
+
+export async function routes(app: FastifyInstance, options: any) {
+  createUserRoute(app);
+  getUserRoute(app);
+  updateUserRoute(app);
+  deleteUserRoute(app);
 }

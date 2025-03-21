@@ -15,8 +15,10 @@ export const userController = {
         password,
         Number(process.env.HASH_SALT) || 10
       );
+      const id = crypto.randomUUID();
       await databaseClient.user.create({
         data: {
+          id,
           name,
           email,
           password: hashedPassword,
@@ -29,6 +31,7 @@ export const userController = {
         name: name,
         email: email,
         password: process.env.NODE_ENV === "development" ? password : undefined,
+        id: process.env.NODE_ENV === "development" ? id : undefined,
       });
     } catch (error) {
       console.error("Error creating user:", error);
