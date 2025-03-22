@@ -16,5 +16,14 @@ export const unathorizedSchema = Type.Object({
   }),
 });
 
+export const successSchema = Type.Object({
+  message: Type.String({
+    default: "Success",
+  }),
+  data: Type.Optional(Type.Any()),
+});
+
 export type NotFoundObject = Static<typeof NotFoundSchema>;
 export type IdParamsObject = Static<typeof idParamsSchema>;
+export type UnathorizedObject = Static<typeof unathorizedSchema>;
+export type SuccessObject = Static<typeof successSchema>;

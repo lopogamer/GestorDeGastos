@@ -30,19 +30,35 @@ enum TransactionType {
   EXPENSE
 }
 
+enum ExpenseType {
+  ESSENTIAL
+  OPTIONAL
+}
+
+enum Category {
+  FOOD
+  TRANSPORT
+  ENTERTAINMENT
+  UTILITIES
+  HEALTH
+  OTHER
+}
+
 model Transaction {
-  id          String          @id @default(uuid())
-  userId      String
-  amount      Float
-  category    String
-  type        TransactionType
-  data        DateTime
-  description String?
-  createdAt   DateTime        @default(now())
-  updatedAt   DateTime        @updatedAt
+  id              String          @id @default(uuid())
+  userId          String
+  amount          Float
+  category        Category
+  type            TransactionType
+  expense_type    ExpenseType?
+  transactionDate DateTime
+  description     String?
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
-  @@index([data])
+  @@index([transactionDate])
+  @@index([type, expense_type])
 }

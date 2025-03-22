@@ -3,10 +3,13 @@ import { authController } from "../controllers/auth.controller";
 import {
   AuthLoginResponseSchema,
   AuthLoginSchema,
-  authRegisterResponseSchema,
 } from "../schemas/auth.schemas";
-import { NotFoundSchema, unathorizedSchema } from "../schemas/common.schemas";
-import { UserCreateSchema } from "../schemas/user.schemas";
+import {
+  NotFoundSchema,
+  successSchema,
+  unathorizedSchema,
+} from "../schemas/common.schemas";
+import { UserCreateSchema, userInfoSchema } from "../schemas/user.schemas";
 
 async function loginRoute(app: FastifyInstance) {
   app.post("/login", {
@@ -26,7 +29,7 @@ async function registerRoute(app: FastifyInstance) {
     schema: {
       body: UserCreateSchema,
       response: {
-        200: authRegisterResponseSchema,
+        201: successSchema,
       },
     },
     handler: authController.register,
@@ -35,4 +38,5 @@ async function registerRoute(app: FastifyInstance) {
 
 export async function authRoutes(app: FastifyInstance) {
   loginRoute(app);
+  registerRoute(app);
 }

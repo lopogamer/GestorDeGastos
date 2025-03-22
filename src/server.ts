@@ -8,6 +8,7 @@ import { customErrorHandler } from "./utils/error_handle";
 import authPlugin from "./plugin/auth.plugin";
 import jwt from "fastify-jwt";
 import { authRoutes } from "./routes/auth.routes";
+import { transactionRoutes } from "./routes/transation.routes";
 const transport_opts = {
   target: "pino-pretty",
   options: {
@@ -42,6 +43,7 @@ server.register(jwt, { secret: process.env.JWT_SECRET || "supersecret" });
 server.register(authPlugin);
 server.register(userRoutes, { prefix: "/users" });
 server.register(authRoutes, { prefix: "/auth" });
+server.register(transactionRoutes, { prefix: "/transactions" });
 
 server.get("/health", async () => {
   return { status: "ok" };

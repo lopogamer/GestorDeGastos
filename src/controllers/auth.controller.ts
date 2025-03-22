@@ -1,9 +1,7 @@
 import { AuthLoginSchema } from "./../schemas/auth.schemas";
 import { FastifyRequest } from "fastify";
 import databaseClient from "../prisma/prisma_client";
-import { User } from "@prisma/client";
 import bcrypt from "bcrypt";
-import { register } from "module";
 import { UserCreateSchema } from "../schemas/user.schemas";
 
 export const authController = {
@@ -31,6 +29,7 @@ export const authController = {
       const payload = {
         id: user.id,
       };
+
       const token = await reply.jwtSign(payload, {
         expiresIn: "1h",
       });
@@ -66,13 +65,15 @@ export const authController = {
           expenses,
         },
       });
-
       reply.status(201).send({
         message: "User created successfully",
-        name: name,
-        email: email,
-        password: process.env.NODE_ENV === "development" ? password : undefined,
-        id: process.env.NODE_ENV === "development" ? id : undefined,
+        data: {
+          name: name,
+          email: email,
+          password:
+            process.env.NODE_ENV === "development" ? password : undefined,
+          id: process.env.NODE_ENV === "development" ? id : undefined,
+        },
       });
     } catch (error) {
       console.error("Error creating user:", error);
