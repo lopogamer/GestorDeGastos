@@ -1,9 +1,13 @@
-import { FastifyInstance } from "fastify";
+import { FastifyInstance, RouteShorthandOptions } from "fastify";
 import { transactionController } from "../controllers/transaction.controller";
-import { createTransactionSchema } from "../schemas/transation.schema";
+import {
+  createTransactionSchema,
+  transationInfoSchema,
+  updateTransactionSchema,
+} from "../schemas/transation.schema";
 import { successSchema } from "../schemas/common.schemas";
 
-function createTransationRoute(app: FastifyInstance) {
+export async function transactionRoutes(app: FastifyInstance) {
   app.post("/", {
     schema: {
       body: createTransactionSchema,
@@ -14,8 +18,47 @@ function createTransationRoute(app: FastifyInstance) {
     preHandler: app.authenticate,
     handler: transactionController.createTransaction,
   });
-}
+  app.get("/", {
+    schema: {
+      response: {
+        200: transationInfoSchema,
+      },
+    },
+    preHandler: app.authenticate,
+    handler: transactionController.getTransactions,
+  });
+  app.get("/search", {
+    schema: {
+      response: {
+        200: transationInfoSchema,
+      },
+    },
+    preHandler: app.authenticate,
+    handler: transactionController.searchTransaction,
+  });
 
-export async function transactionRoutes(app: FastifyInstance) {
-  createTransationRoute(app);
+  app.put("/:id", {
+    schema: {
+      body: updateTransactionSchema,
+      response: {
+        200: transationInfoSchema,
+      },
+    },
+    preHandler: app.authenticate,
+    handler: transactionController.updateTransaction,
+  });
+
+  app.delete("/:id", {
+    schema: {
+      response: {
+        200: successSchema,
+      },
+    },
+    preHandler: app.authenticate,
+    handler: transactionController.deleteTransaction,
+  });
+  app.get("/dashboard", {
+    preHandler: app.authenticate,
+    handler: transactionController.getDashboardData,
+  });
 }
